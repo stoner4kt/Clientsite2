@@ -3,12 +3,14 @@ import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDocs, 
 
 // --- FIREBASE CONFIG ---
 const firebaseConfig = {
-  apiKey: "AIza...", 
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  appId: "1:..."
-};
+    apiKey: "AIzaSyBjnfrqymhhE88LkFBIrC7tvV7YyXRCTh4",
+    authDomain: "sgelar-web-store.firebaseapp.com",
+    projectId: "sgelar-web-store",
+    storageBucket: "sgelar-web-store.firebasestorage.app",
+    messagingSenderId: "984584108456",
+    appId: "1:984584108456:web:51ca48c53cbf16d459059d",
+    measurementId: "G-Q0FD7RSMQQ"
+  };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
