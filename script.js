@@ -176,37 +176,49 @@ async function generatePDF(cartData, total) {
         template.style.display = "none";
     });
 }
-// --- PAYSTACK PAYMENT GATEWAY ---
+    // --- PAYSTACK PAYMENT GATEWAY ---
+// --- SECURE PAYSTACK INTEGRATION ---
 window.payWithPaystack = async () => {
-    const totalAmount = parseInt(document.getElementById('cart-total-final').innerText);
+    // 1. Recalculate total from the database, not the HTML (Prevents manipulation)
+    const querySnapshot = await getDocs(collection(db, "cart"));
+    let totalRand = 0;
     
-    if (totalAmount <= 0) {
+    querySnapshot.forEach((doc) => {
+        totalRand += doc.data().price;
+    });
+
+    if (totalRand <= 0) {
         alert("Your cart is empty!");
         return;
     }
 
     const email = prompt("Please enter your email for the receipt:");
     if (!email || !email.includes('@')) {
-        alert("A valid email is required for payment.");
+        alert("A valid email is required.");
         return;
     }
 
+    // 2. Convert Rands to Cents (Paystack requirement)
+    // Example: R450.00 becomes 45000
+    const totalCents = Math.round(totalRand * 100);
+
     const handler = PaystackPop.setup({
-        key: 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // REPLACE WITH YOUR TEST PUBLIC KEY
+        key: 'pk_test_PASTE_CLIENT_TEST_KEY_HERE', 
         email: email,
-        amount: totalAmount * 100, // Paystack uses cents (R1.00 = 100)
+        amount: totalCents, // Sending the cents value
         currency: 'ZAR',
         callback: async (response) => {
-            console.log("Payment successful. Reference:", response.reference);
+            console.log("Payment successful. Ref:", response.reference);
             
-            // 1. Clear the Firebase Cart after successful payment
-            await clearFirebaseCart();
+            // Clear the cart in Firebase after successful payment
+            const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "cart", d.id)));
+            await Promise.all(deletePromises);
             
-            // 2. Redirect to success page
+            // Redirect to success page
             window.location.href = `success.html?ref=${response.reference}&email=${email}`;
         },
         onClose: () => {
-            alert('Payment window closed.');
+            alert('Transaction cancelled.');
         }
     });
 
