@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | SGELAR</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .success-container {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .check-icon {
+            font-size: 80px;
+            color: var(--yellow);
+            margin-bottom: 20px;
+        }
+        .order-box {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 450px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container success-container">
+        <div class="check-icon">✓</div>
+        <h1 class="section-title">Order Confirmed!</h1>
+        <p>Thank you for choosing <strong>Sgelar</strong>. Your shoes are being prepared for the journey.</p>
+
+        <div class="order-box">
+            <p style="color: #888; font-size: 0.9rem;">PAYMENT REFERENCE</p>
+            <h3 id="display-ref" style="color: var(--yellow); letter-spacing: 2px; margin: 10px 0;">---</h3>
+            <p id="display-email" style="font-size: 0.9rem;"></p>
+        </div>
+
+        <p style="max-width: 500px; margin-bottom: 30px; color: #bbb;">
+            A receipt has been generated. Please keep this reference number for delivery inquiries.
+        </p>
+
+        <a href="index.html" class="btn">Return to Home</a>
+    </div>
+
+    <script>
+        // Get the data from the URL (sent by Paystack callback)
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('display-ref').innerText = params.get('ref') || 'N/A';
+        document.getElementById('display-email').innerText = params.get('email') || '';
+    </script>
+</body>
+</html>

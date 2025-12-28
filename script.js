@@ -1,72 +1,105 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-// --- FIREBASE CONFIGURATION (Placeholder) ---
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIza...", 
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  appId: "1:..."
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- 15 PRODUCT DATABASE ---
+// THIS BLOCK MUST BE AT THE TOP TO ENSURE THE NAV WORKS FIRST
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+
+    if (hamburger && navLinks) {
+        hamburger.onclick = () => {
+            navLinks.classList.toggle('active');
+            console.log("Menu toggled");
+        };
+    }
+
+    // --- Countdown Logic ---
+    const countdownEl = document.getElementById("countdown");
+    if (countdownEl) {
+        const countDownDate = new Date("Jan 31, 2026 23:59:59").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            countdownEl.innerHTML = `SALE ENDS IN: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }, 1000);
+    }
+});
+
+// Add this inside your DOMContentLoaded listener in script.js
+const banner = document.querySelector('.announcement-banner span');
+if (banner) {
+    // You could later fetch this string from your Firebase DB!
+    banner.innerHTML = "<strong>Update:</strong><span><strong>BACK TO SCHOOL SALE:</strong> Get 10% off all Junior Rugged models! Limited time only.</span> ";
+}
+
 const products = [
-    { id: 1, name: "Sgelar Classic Oxford", price: 450, img: "assets/img/shoe1.webp" },
-    { id: 2, name: "Sgelar Velcro Junior", price: 380, img: "assets/img/shoe2.webp" },
-    { id: 3, name: "Premium T-Bar Buckle", price: 490, img: "assets/img/shoe3.webp" },
-    { id: 4, name: "Tough-Step Lace Up", price: 520, img: "assets/img/shoe4.webp" },
-    { id: 5, name: "Sgelar Mary Jane", price: 430, img: "assets/img/shoe5.webp" },
-    { id: 6, name: "Active Sport School", price: 400, img: "assets/img/shoe6.webp" },
-    { id: 7, name: "Formal Senior Derby", price: 600, img: "assets/img/shoe7.jpg" },
-    { id: 8, name: "Sgelar Slip-On Ease", price: 350, img: "assets/img/shoe8.jpg" },
-    { id: 9, name: "Junior Rugged Sole", price: 410, img: "assets/img/shoe9.jpg" },
-    { id: 10, name: "Classic Monk Strap", price: 550, img: "assets/img/shoe10.jpg" },
-    { id: 11, name: "High-Shine Formal", price: 580, img: "assets/img/shoe11.jpg" },
-    { id: 12, name: "Velcro Play-Safe", price: 370, img: "assets/img/shoe12.jpg" },
-    { id: 13, name: "Sgelar Comfort Arch", price: 480, img: "assets/img/shoe13.jpg" },
-    { id: 14, name: "Standard Issue Black", price: 320, img: "assets/img/shoe14.jpg" },
+    { id: 1, name: "Sgelar The Classic Derby", price: 450, img: "assets/img/shoe1.jpg", hasSizes: true },
+    { id: 2, name: "Sgelar lace up", price: 350, img: "assets/img/shoe2.jpg", hasSizes: true},
+    { id: 3, name: "Premium T-Bar Buckle", price: 350, img: "assets/img/shoe3.jpg", hasSizes: true },
+    { id: 4, name: "Tough-Step Lace Up", price: 350, img: "assets/img/shoe4.jpg", hasSizes: true },
+    { id: 5, name: "Sgelar Water Bottle ", price: 150, img: "assets/img/bottle3.jpg", hasSizes: false},
+    { id: 6, name: "Sgelar Water Bottle ", price: 150, img: "assets/img/bottle1.jpg", hasSizes: false},
+    { id: 7, name: " Senior Water Bottle", price: 150, img: "assets/img/bottle2.jpg", hasSizes: false},
+    { id: 8, name: "Sgelar Bagpack ", price: 200, img: "assets/img/shoe8.jpg", hasSizes: false},
+    { id: 9, name: "Sgelar Combo ", price: 550, img: "assets/img/combodeal.jpg",hasSizes: false },
+   
+    
     { id: 15, name: "Executive Senior Lace", price: 650, img: "assets/img/shoe15.jpg" }
 ];
 
-// --- CORE UI LOGIC ---
-
-// Hamburger Toggle
-document.getElementById('hamburger')?.addEventListener('click', () => {
-    document.getElementById('nav-links').classList.toggle('active');
-});
-
-// Render Shop Page
+// --- RENDER SHOP ---
 const shopGrid = document.getElementById('product-grid');
 if (shopGrid) {
-    products.forEach(p => {
-        shopGrid.innerHTML += `
-            <div class="card">
-                <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200?text=Shoe+Image'">
-                <h3>${p.name}</h3>
-                <p style="color:var(--yellow); font-weight:bold;">R${p.price}</p>
-                <select id="size-${p.id}" class="size-select" style="width:100%; background:#2a2a2a; color:white; border:1px solid var(--yellow); padding:8px; border-radius:5px; margin-bottom:10px;">
-                    <option value="3">Size 3</option>
-                    <option value="4">Size 4</option>
-                    <option value="5">Size 5</option>
-                    <option value="6">Size 6</option>
-                    <option value="7">Size 7</option>
-                </select>
-                <button class="btn" style="width:100%" onclick="addToFirebase(${p.id})">Add to Cart</button>
-            </div>
-        `;
+    shopGrid.innerHTML = products.map(p => `
+        <div class="card">
+            <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200?text=Shoe+Image'">
+            <h3>${p.name}</h3>
+            <p style="color:var(--yellow); font-weight:bold;">R${p.price}</p>
+            
+            ${p.hasSizes ? `
+            <select id="size-${p.id}" class="size-select" style="width:100%; margin-bottom:10px; padding:8px; border-radius:5px;">
+                <option value="3">Size 3</option>
+                <option value="4">Size 4</option>
+                <option value="5">Size 5</option>
+                <option value="6">Size 6</option>
+                <option value="7">Size 7</option>
+            </select>
+            ` : '<div style="height:45px;"></div>'} 
+            
+            <button class="btn add-btn" data-id="${p.id}" style="width:100%">Add to Cart</button>
+        </div>
+    `).join('');
+
+    // Re-bind listeners (Keep your existing code here)
+    document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => addToFirebase(parseInt(e.target.dataset.id)));
     });
 }
 
-// --- FIREBASE CART LOGIC ---
-
-// Add to Cart
-window.addToFirebase = async (id) => {
+// --- CART ACTIONS ---
+async function addToFirebase(id) {
     const p = products.find(prod => prod.id === id);
-    const size = document.getElementById(`size-${id}`).value;
+    
+    // Check if the element exists before grabbing the value; otherwise default to "N/A"
+    const sizeElement = document.getElementById(`size-${id}`);
+    const size = sizeElement ? sizeElement.value : "N/A";
+
     try {
         await addDoc(collection(db, "cart"), {
             name: p.name,
@@ -75,39 +108,34 @@ window.addToFirebase = async (id) => {
             timestamp: Date.now()
         });
         alert(`${p.name} added to cart!`);
-    } catch (e) {
-        console.error("Error adding document: ", e);
+    } catch (e) { 
+        alert("Check Firebase Config!"); 
+        console.error(e); 
     }
 };
 
-// Real-time Cart Listener
-const cartItemsContainer = document.getElementById('cart-items');
+// Listen for cart updates
 onSnapshot(collection(db, "cart"), (snap) => {
-    // Update Cart Count in Nav
     const countElement = document.getElementById('cart-count');
     if (countElement) countElement.innerText = snap.size;
 
-    // Update Cart Page if user is on it
+    const cartItemsContainer = document.getElementById('cart-items');
     if (cartItemsContainer) {
         let total = 0;
         let cartData = [];
-        cartItemsContainer.innerHTML = "";
-
-        if (snap.empty) {
-            cartItemsContainer.innerHTML = "<p style='text-align:center;'>Your cart is empty.</p>";
-        }
+        cartItemsContainer.innerHTML = snap.empty ? "<p>Your cart is empty.</p>" : "";
 
         snap.forEach(d => {
             const item = d.data();
             total += item.price;
             cartData.push(item);
             cartItemsContainer.innerHTML += `
-                <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:var(--dark-grey);">
+                <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <div>
-                        <h4 style="margin:0;">${item.name}</h4>
-                        <small style="color:var(--yellow)">Size: ${item.selectedSize} | Price: R${item.price}</small>
+                        <h4>${item.name}</h4>
+                        <small>Size: ${item.selectedSize} | R${item.price}</small>
                     </div>
-                    <button class="btn" style="background:red; padding:8px 15px;" onclick="removeItem('${d.id}')">Remove</button>
+                    <button class="btn remove-btn" data-docid="${d.id}" style="background:red; padding:8px 15px;">Remove</button>
                 </div>
             `;
         });
@@ -115,67 +143,142 @@ onSnapshot(collection(db, "cart"), (snap) => {
         document.getElementById('cart-total').innerText = total;
         document.getElementById('cart-total-final').innerText = total;
 
-        // Setup Checkout Button
+        // Re-bind remove buttons
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.onclick = () => deleteDoc(doc(db, "cart", btn.dataset.docid));
+        });
+
         const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) {
-            checkoutBtn.onclick = () => generatePDF(cartData, total);
-        }
+        if (checkoutBtn) checkoutBtn.onclick = () => generatePDF(cartData, total);
     }
 });
 
-// Remove Item
-window.removeItem = async (id) => {
-    await deleteDoc(doc(db, "cart", id));
-};
-
-// --- PDF RECEIPT GENERATION ---
+// PDF Generation
 async function generatePDF(cartData, total) {
     const template = document.getElementById('receipt-template');
-    const itemsBody = document.getElementById('r-items-body');
-    
-    // Fill Template Data
+    if (!template) return;
+
     document.getElementById('r-date').innerText = new Date().toLocaleDateString();
     document.getElementById('r-id').innerText = Math.floor(Math.random() * 90000) + 10000;
     document.getElementById('r-total-amount').innerText = total;
     
-    itemsBody.innerHTML = "";
-    cartData.forEach(item => {
-        itemsBody.innerHTML += `
-            <tr>
-                <td style="padding:10px; border:1px solid #ddd;">${item.name}</td>
-                <td style="padding:10px; border:1px solid #ddd; text-align:center;">${item.selectedSize}</td>
-                <td style="padding:10px; border:1px solid #ddd; text-align:right;">R${item.price}</td>
-            </tr>
-        `;
+    document.getElementById('r-items-body').innerHTML = cartData.map(item => `
+        <tr>
+            <td style="padding:10px; border:1px solid #ddd;">${item.name}</td>
+            <td style="padding:10px; border:1px solid #ddd; text-align:center;">${item.selectedSize}</td>
+        </tr>
+    `).join('');
+
+    template.style.display = "block";
+    html2pdf().set({ margin: 0.5, filename: 'Sgelar_Receipt.pdf' }).from(template).save().then(() => {
+        template.style.display = "none";
+    });
+}
+// --- PAYSTACK PAYMENT GATEWAY ---
+window.payWithPaystack = async () => {
+    const totalAmount = parseInt(document.getElementById('cart-total-final').innerText);
+    
+    if (totalAmount <= 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const email = prompt("Please enter your email for the receipt:");
+    if (!email || !email.includes('@')) {
+        alert("A valid email is required for payment.");
+        return;
+    }
+
+    const handler = PaystackPop.setup({
+        key: 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // REPLACE WITH YOUR TEST PUBLIC KEY
+        email: email,
+        amount: totalAmount * 100, // Paystack uses cents (R1.00 = 100)
+        currency: 'ZAR',
+        callback: async (response) => {
+            console.log("Payment successful. Reference:", response.reference);
+            
+            // 1. Clear the Firebase Cart after successful payment
+            await clearFirebaseCart();
+            
+            // 2. Redirect to success page
+            window.location.href = `success.html?ref=${response.reference}&email=${email}`;
+        },
+        onClose: () => {
+            alert('Payment window closed.');
+        }
     });
 
-    const options = {
-        margin: 0.5,
-        filename: `Sgelar_Order_${Date.now()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
+    handler.openIframe();
+};
 
-    template.style.display = "block"; // Show to capture
-    html2pdf().set(options).from(template).save().then(() => {
-        template.style.display = "none"; // Hide after capture
-        alert("Receipt downloaded successfully!");
+// Helper function to clear the cart in Firestore
+async function clearFirebaseCart() {
+    try {
+        const cartRef = collection(db, "cart");
+        const snapshot = await getDocs(cartRef); // You'll need to add 'getDocs' to your Firestore imports
+        const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, "cart", d.id)));
+        await Promise.all(deletePromises);
+    } catch (error) {
+        console.error("Error clearing cart:", error);
+    }
+}
+// --- STAR RATING LOGIC ---
+let selectedRating = 0;
+const stars = document.querySelectorAll('.star-rating i');
+stars.forEach(star => {
+    star.addEventListener('click', () => {
+        selectedRating = star.dataset.value;
+        stars.forEach(s => s.classList.remove('active'));
+        for(let i=0; i < selectedRating; i++) stars[i].classList.add('active');
+    });
+});
+
+// --- SUBMIT REVIEW ---
+const reviewForm = document.getElementById('review-form');
+if (reviewForm) {
+    reviewForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('rev-name').value;
+        const text = document.getElementById('rev-text').value;
+
+        if(selectedRating === 0) return alert("Please select a star rating!");
+
+        try {
+            await addDoc(collection(db, "reviews"), {
+                name, text, rating: selectedRating, timestamp: Date.now()
+            });
+            alert("Review posted! Thank you.");
+            reviewForm.reset();
+            stars.forEach(s => s.classList.remove('active'));
+        } catch (err) { console.error(err); }
     });
 }
 
-// Countdown Timer for Home Page
-function runCountdown() {
-    const deadline = new Date("Jan 15, 2026 00:00:00").getTime();
-    const timerBox = document.getElementById("countdown");
-    if (!timerBox) return;
+// --- LOAD REVIEWS INTO CAROUSEL ---
+const reviewsContainer = document.getElementById('reviews-container');
+if (reviewsContainer) {
+    const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+        reviewsContainer.innerHTML = snapshot.docs.map(doc => {
+            const r = doc.data();
+            const starHTML = '<i class="fas fa-star"></i>'.repeat(r.rating);
+            return `
+                <div class="swiper-slide">
+                    <div class="review-card">
+                        <div class="stars-display">${starHTML}</div>
+                        <p>"${r.text}"</p>
+                        <h4>- ${r.name}</h4>
+                    </div>
+                </div>`;
+        }).join('');
 
-    setInterval(() => {
-        const now = new Date().getTime();
-        const t = deadline - now;
-        const d = Math.floor(t / (1000 * 60 * 60 * 24));
-        const h = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        timerBox.innerText = `Back To School Sale Ends In: ${d}d ${h}h`;
-    }, 1000);
+        // Initialize Swiper
+        new Swiper('.review-swiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
+            autoplay: { delay: 4000 }
+        });
+    });
 }
-runCountdown();

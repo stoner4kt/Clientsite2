@@ -7,19 +7,26 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">SGELAR</div>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="shop.html">Shop Shoes</a></li>
-            <li><a href="cart.html" class="active">Cart (<span id="cart-count">0</span>)</a></li>
-        </ul>
-        <div class="hamburger" id="hamburger">
-            <span></span><span></span><span></span>
-        </div>
-    </nav>
+ <nav class="navbar">
+    <img src="assets/img/logo.png" style="height: 40px;"> 
+    <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop Shoes</a></li>
+        
+        <li><a href="policies.html">Policies </a></li>
+        
+        <li><a href="about.html">About Us</a></li>
+        
+        <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+    </div>
+</nav>
 
     <main class="container">
         <h2 class="section-title" style="color: var(--yellow); text-align: center;">Shopping Cart</h2>
@@ -37,7 +44,7 @@
                 <span>Total:</span>
                 <span>R<span id="cart-total-final">0</span></span>
             </div>
-            <button class="btn" id="checkout-btn" style="width: 100%;">Complete Purchase & Get Receipt</button>
+            <button class="btn" id="checkout-btn"onclick="payWithPaystack()" style="width: 100%;">Purchase & Get Receipt</button>
         </div>
     </main>
 
@@ -70,16 +77,45 @@
             <p style="font-size: 12px; color: #666;">For returns or tracking, please use your Order ID.</p>
         </div>
     </div>
- <footer>
-        <div class="social-links">
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
+<footer class="footer">
+    <div class="container footer-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; padding: 40px 0;">
+        <div>
+            <h3 style="color:var(--yellow)">SGELAR</h3>
+            <p>Premium South African School Shoes. Built for the journey.</p>
         </div>
-        <p>© 2025 SGELAR School Shoes. Locally Crafted.</p>
-    </footer>
+        <div>
+            <h4 style="color:var(--white)">Quick Links</h4>
+            <ul style="list-style:none; padding:0;">
+                <li><a href="shop.html">Shop All</a></li>
+                
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="color:var(--white)">Customer Care</h4>
+            <ul style="list-style:none; padding:0;">
+                <li><a href="policies.html#shipping">Shipping Info</a></li>
+                <li><a href="policies.html#returns">Returns & Refunds</a></li>
+                <li><a href="policies.html#privacy">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </div>
+    
+          <div class="social-links">
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/share/1BpsLodp2L/ "><i class="fab fa-instagram"></i></a>
+            <a href="<https></https>://www.facebook.com/share/1BpsLodp2L/"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>  
+    
+    <div style="text-align:center; border-top: 1px solid #333; padding: 20px;">
+        <p>&copy; 2024 SGELAR. Proudly South African 🇿🇦</p>
+    </div>
+</footer>
 
-    <script type="module" src="script.js"></script>
+ <script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
