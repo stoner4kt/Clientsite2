@@ -6,7 +6,7 @@
     <title>Your Cart | SGELAR School Shoes</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     
     <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
@@ -28,9 +28,9 @@
     </div>
 </nav>
 
-    <main class="container">
+           <main class="container">
         <h2 class="section-title" style="color: var(--yellow); text-align: center;">Shopping Cart</h2>
-        
+
         <div id="cart-items-wrapper">
             <div id="cart-items"></div>
         </div>
@@ -44,39 +44,37 @@
                 <span>Total:</span>
                 <span>R<span id="cart-total-final">0</span></span>
             </div>
-            <button class="btn" id="checkout-btn"onclick="payWithPaystack()" style="width: 100%;">Purchase & Get Receipt</button>
-        </div>
-    </main>
 
-    <div id="receipt-template" style="display:none; padding: 50px; color: #000; background: #fff; font-family: 'Helvetica', sans-serif;">
-        <div style="text-align: center;">
-            <h1 style="margin: 0; color: #000; font-size: 28px;">SGELAR FOOTWEAR</h1>
-            <p style="margin: 5px 0;">Premium South African School Shoes</p>
-            <p style="font-size: 12px;">Order Receipt</p>
-        </div>
-        <hr style="border: 1px solid #eee; margin: 20px 0;">
-        <div style="display: flex; justify-content: space-between; font-size: 14px;">
-            <p><strong>Date:</strong> <span id="r-date"></span></p>
-            <p><strong>Order ID:</strong> #<span id="r-id"></span></p>
-        </div>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            <thead>
-                <tr style="background: #f4f4f4; text-align: left;">
-                    <th style="padding: 10px; border: 1px solid #ddd;">Item Description</th>
-                    <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Size</th>
-                    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Price</th>
-                </tr>
-            </thead>
-            <tbody id="r-items-body"></tbody>
-        </table>
-        <div style="text-align: right; margin-top: 30px;">
-            <h2 style="margin: 0;">Total Amount: R<span id="r-total-amount"></span></h2>
-        </div>
-        <div style="margin-top: 60px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
-            <p>Thank you for choosing local quality.</p>
-            <p style="font-size: 12px; color: #666;">For returns or tracking, please use your Order ID.</p>
-        </div>
+<div class="checkout-form-container">
+    <h3><i class="fas fa-truck"></i> Delivery Information</h3>
+    
+    <div class="form-group">
+        <input type="text" id="cust-name" placeholder="Full Name (e.g., Thabo Mokoena)" required>
     </div>
+    
+    <div class="form-group">
+        <input type="email" id="cut-email" placeholder="Email Address" required>
+    </div>
+    
+    <div class="form-group">
+        <input type="tel" id="cust-phone" placeholder="WhatsApp / Phone Number" required>
+    </div>
+    
+    <div class="form-group">
+        <textarea id="cust-address" placeholder="Full Address (Street name, Suburb, City, Postal Code)" required></textarea>
+    </div>
+
+    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+        <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+            * Please ensure your address is correct. We deliver nationwide in South Africa.
+        </p>
+        <button class="btn" id="checkout-btn" onclick="payWithPaystack()" style="width: 100%; font-weight: bold; background: #28a745;">
+            Proceed to Secure Payment
+        </button>
+    </div>
+</div>
+
+    
 <footer class="footer">
     <div class="container footer-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; padding: 40px 0;">
         <div>

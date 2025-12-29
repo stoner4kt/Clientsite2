@@ -62,7 +62,7 @@ const products = [
     { id: 9, name: "Sgelar Combo ", price: 550, img: "assets/img/combodeal.jpg",hasSizes: false },
    
     
-    { id: 15, name: "Executive Senior Lace", price: 650, img: "assets/img/shoe15.jpg" }
+    { id: 15, name: "New Product Coming ", price: 100, img: "assets/img/shoe15.jpg" }
 ];
 
 // --- RENDER SHOP ---
@@ -81,7 +81,7 @@ if (shopGrid) {
                 <option value="5">Size 5</option>
                 <option value="6">Size 6</option>
                 <option value="7">Size 7</option>
-            </select>
+     .       </select>
             ` : '<div style="height:45px;"></div>'} 
             
             <button class="btn add-btn" data-id="${p.id}" style="width:100%">Add to Cart</button>
@@ -151,14 +151,11 @@ onSnapshot(collection(db, "cart"), (snap) => {
         });
 
         const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) checkoutBtn.onclick = () => generatePDF(cartData, total);
+        if (checkoutBtn) checkoutBtn.onclick = () => window.payWithPaystack();
     }
 });
 
 // PDF Generation
-async function generatePDF(cartData, total) {
-    const template = document.getElementById('receipt-template');
-    if (!template) return;
 
     document.getElementById('r-date').innerText = new Date().toLocaleDateString();
     document.getElementById('r-id').innerText = Math.floor(Math.random() * 90000) + 10000;
@@ -175,26 +172,35 @@ async function generatePDF(cartData, total) {
     html2pdf().set({ margin: 0.5, filename: 'Sgelar_Receipt.pdf' }).from(template).save().then(() => {
         template.style.display = "none";
     });
-}
+
+
     // --- PAYSTACK PAYMENT GATEWAY ---
 // --- SECURE PAYSTACK INTEGRATION ---
 window.payWithPaystack = async () => {
-    // 1. Recalculate total from the database, not the HTML (Prevents manipulation)
+    // 1. Capture Form Inputs
+    const name = document.getElementById('cust-name').value;
+    const email = document.getElementById('cust-email').value;
+    const phone = document.getElementById('cust-phone').value;
+    const address = document.getElementById('cust-address').value;
+
+    // 2. Simple Validation
+    if (!name || !email || !phone || !address) {
+        alert("Please fill in all delivery details.");
+        return;
+    }
+
     const querySnapshot = await getDocs(collection(db, "cart"));
     let totalRand = 0;
-    
+    let itemsPurchased = "";
+
     querySnapshot.forEach((doc) => {
-        totalRand += doc.data().price;
+        const data = doc.data();
+        totalRand += data.price;
+        itemsPurchased += `${data.name} (Size: ${data.selectedSize}), `;
     });
 
     if (totalRand <= 0) {
         alert("Your cart is empty!");
-        return;
-    }
-
-    const email = prompt("Please enter your email for the receipt:");
-    if (!email || !email.includes('@')) {
-        alert("A valid email is required.");
         return;
     }
 
@@ -206,7 +212,14 @@ window.payWithPaystack = async () => {
         key: 'pk_test_PASTE_CLIENT_TEST_KEY_HERE', 
         email: email,
         amount: totalCents, // Sending the cents value
-        currency: 'ZAR',
+        currency: 'ZAR',metadata: {
+            custom_fields: [
+                { display_name: "Customer Name", variable_name: "customer_name", value: name },
+                { display_name: "Phone Number", variable_name: "phone_number", value: phone },
+                { display_name: "Delivery Address", variable_name: "delivery_address", value: address },
+                { display_name: "Items", variable_name: "items", value: itemsPurchased }
+            ]
+        },
         callback: async (response) => {
             console.log("Payment successful. Ref:", response.reference);
             
