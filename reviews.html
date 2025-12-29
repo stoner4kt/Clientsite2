@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Reviews | Auto Finance Group</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Read what our satisfied clients say about Auto Finance Group." />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- JS -->
+  <script defer src="js/main.js"></script>
+
+  <!-- Firebase SDKs (add your config later) -->
+  <script type="module">
+    // Import the functions you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+    apiKey: "AIzaSyBjnfrqymhhE88LkFBIrC7tvV7YyXRCTh4",
+    authDomain: "sgelar-web-store.firebaseapp.com",
+    projectId: "sgelar-web-store",
+    storageBucket: "sgelar-web-store.firebasestorage.app",
+    messagingSenderId: "984584108456",
+    appId: "1:984584108456:web:51ca48c53cbf16d459059d",
+    measurementId: "G-Q0FD7RSMQQ"
+  };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadReviews() {
+      const reviewsContainer = document.getElementById("reviews-container");
+      const querySnapshot = await getDocs(collection(db, "reviews"));
+
+      if (querySnapshot.empty) {
+        reviewsContainer.innerHTML = "<p>No reviews available yet.</p>";
+        return;
+      }
+
+      querySnapshot.forEach((doc) => {
+        const review = doc.data();
+
+        const reviewCard = document.createElement("div");
+        reviewCard.className = "card";
+
+        reviewCard.innerHTML = `
+          <h3>${review.name}</h3>
+          <p>"${review.message}"</p>
+          <small>⭐ ${review.rating || 5}/5</small>
+        `;
+
+        reviewsContainer.appendChild(reviewCard);
+      });
+    }
+
+    loadReviews();
+  </script>
+</head>
+
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">Auto Finance Group</div>
+
+      <button class="hamburger" id="hamburger">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="catalog.html">Vehicles</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="contactform.html">Apply</a></li>
+        <li><a href="policies.html">Policies</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ================= REVIEWS ================= -->
+  <section class="section">
+    <h1>What Our Clients Say</h1>
+    <p>
+      We pride ourselves on excellent service and successful approvals.
+      Here’s what our clients have to say.
+    </p>
+
+    <div id="reviews-container" class="catalog-grid">
+      <!-- Reviews auto-loaded from Firebase -->
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+      <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#catalog">Vehicles</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            
+            <div class="footer-col">
+      <h4>Contact</h4>
+      <p>Email: info@autofinancegroup.co.za</p>
+      <p>Cell / WhatsApp: 078 942 5468</p>
+    </div>
+            
+            <p>&copy; 2025 AutoFinance Pro. All rights reserved. Cape Town, South Africa.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
