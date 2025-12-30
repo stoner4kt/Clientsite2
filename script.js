@@ -155,23 +155,7 @@ onSnapshot(collection(db, "cart"), (snap) => {
     }
 });
 
-// PDF Generation
 
-    document.getElementById('r-date').innerText = new Date().toLocaleDateString();
-    document.getElementById('r-id').innerText = Math.floor(Math.random() * 90000) + 10000;
-    document.getElementById('r-total-amount').innerText = total;
-    
-    document.getElementById('r-items-body').innerHTML = cartData.map(item => `
-        <tr>
-            <td style="padding:10px; border:1px solid #ddd;">${item.name}</td>
-            <td style="padding:10px; border:1px solid #ddd; text-align:center;">${item.selectedSize}</td>
-        </tr>
-    `).join('');
-
-    template.style.display = "block";
-    html2pdf().set({ margin: 0.5, filename: 'Sgelar_Receipt.pdf' }).from(template).save().then(() => {
-        template.style.display = "none";
-    });
 
 
     // --- PAYSTACK PAYMENT GATEWAY ---
@@ -249,63 +233,82 @@ async function clearFirebaseCart() {
         console.error("Error clearing cart:", error);
     }
 }
-// --- STAR RATING LOGIC ---
-let selectedRating = 0;
-const stars = document.querySelectorAll('.star-rating i');
-stars.forEach(star => {
-    star.addEventListener('click', () => {
-        selectedRating = star.dataset.value;
-        stars.forEach(s => s.classList.remove('active'));
-        for(let i=0; i < selectedRating; i++) stars[i].classList.add('active');
-    });
-});
 
-// --- SUBMIT REVIEW ---
-const reviewForm = document.getElementById('review-form');
-if (reviewForm) {
-    reviewForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('rev-name').value;
-        const text = document.getElementById('rev-text').value;
 
-        if(selectedRating === 0) return alert("Please select a star rating!");
-
-        try {
-            await addDoc(collection(db, "reviews"), {
-                name, text, rating: selectedRating, timestamp: Date.now()
+// --- UNIFIED REVIEW LOGIC ---
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Star Rating Selection Logic
+    let selectedRating = 0;
+    const stars = document.querySelectorAll('.star-rating i');
+    
+    stars.forEach(star => {
+        star.onclick = () => {
+            selectedRating = star.getAttribute('data-value');
+            // Visual feedback: color the stars yellow when clicked
+            stars.forEach(s => {
+                s.style.color = s.getAttribute('data-value') <= selectedRating ? '#ffcc00' : '#444';
             });
-            alert("Review posted! Thank you.");
-            reviewForm.reset();
-            stars.forEach(s => s.classList.remove('active'));
-        } catch (err) { console.error(err); }
+        };
     });
-}
 
-// --- LOAD REVIEWS INTO CAROUSEL ---
-const reviewsContainer = document.getElementById('reviews-container');
-if (reviewsContainer) {
-    const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
-    onSnapshot(q, (snapshot) => {
-        reviewsContainer.innerHTML = snapshot.docs.map(doc => {
-            const r = doc.data();
-            const starHTML = '<i class="fas fa-star"></i>'.repeat(r.rating);
-            return `
-                <div class="swiper-slide">
-                    <div class="review-card">
-                        <div class="stars-display">${starHTML}</div>
-                        <p>"${r.text}"</p>
-                        <h4>- ${r.name}</h4>
-                    </div>
-                </div>`;
-        }).join('');
+    // 2. Submit Review to Firebase
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            if (selectedRating === 0) return alert("Please select a star rating!");
 
-        // Initialize Swiper
-        new Swiper('.review-swiper', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            pagination: { el: '.swiper-pagination', clickable: true },
-            breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
-            autoplay: { delay: 4000 }
+            const name = document.getElementById('rev-name').value;
+            const text = document.getElementById('rev-text').value;
+
+            try {
+                await addDoc(collection(db, "reviews"), {
+                    customerName: name,
+                    comment: text,
+                    rating: parseInt(selectedRating),
+                    timestamp: Date.now()
+                });
+                alert("Review posted successfully!");
+                reviewForm.reset();
+                selectedRating = 0;
+                stars.forEach(s => s.style.color = '#444');
+            } catch (error) {
+                console.error("Review Error:", error);
+            }
+        };
+    }
+
+    // 3. Live Review Feed (Swiper compatible)
+    const reviewsContainer = document.getElementById('reviews-container');
+    if (reviewsContainer) {
+        const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            reviewsContainer.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const slide = `
+                    <div class="swiper-slide">
+                        <div class="review-card" style="background:#2a2a2a; padding:20px; border-radius:10px; border:1px solid #ffcc00; min-height:150px;">
+                            <div style="color:#ffcc00; margin-bottom:10px;">${"★".repeat(data.rating)}${"☆".repeat(5 - data.rating)}</div>
+                            <p style="color:white; font-style:italic;">"${data.comment}"</p>
+                            <h4 style="color:#ffcc00; margin-top:10px;">- ${data.customerName}</h4>
+                        </div>
+                    </div>`;
+                reviewsContainer.insertAdjacentHTML('beforeend', slide);
+            });
+            
+            // Initialize Swiper after data is loaded
+            new Swiper('.review-swiper', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                pagination: { el: '.swiper-pagination', clickable: true },
+                autoplay: { delay: 4000 },
+                breakpoints: {
+                    768: { slidesPerView: 2 },
+                    1024: { slidesPerView: 3 }
+                }
+            });
         });
-    });
-}
+    }
+});
