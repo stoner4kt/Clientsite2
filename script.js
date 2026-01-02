@@ -64,7 +64,6 @@ function renderShop(container) {
             return;
         }
 
-        // Grouping logic for "1-7" size documents
         const grouped = {};
         snapshot.docs.forEach(doc => {
             const data = doc.data();
@@ -86,6 +85,10 @@ function renderShop(container) {
             p.variants.sort((a, b) => a.size - b.size);
             const first = p.variants[0];
 
+            // --- THE FIX IS HERE ---
+            // We check if there's more than 1 variant to decide whether to show the dropdown
+            const hasMultipleSizes = p.variants.length > 1;
+
             return `
                 <div class="card">
                     <div class="image-container">
@@ -97,11 +100,18 @@ function renderShop(container) {
                         R${first.price}
                     </p>
 
-                    <select class="size-select" id="select-${safeId}" 
-                            onchange="window.updateUIPrice('${safeId}', this.value)" 
-                            style="width:100%; margin-bottom:10px; padding:8px; background:#222; color:white;">
-                        ${p.variants.map(v => `<option value="${v.price}" data-size="${v.size}">Size ${v.size} - R${v.price}</option>`).join('')}
-                    </select>
+                    ${hasMultipleSizes ? `
+                        <select class="size-select" id="select-${safeId}" 
+                                onchange="window.updateUIPrice('${safeId}', this.value)" 
+                                style="width:100%; margin-bottom:10px; padding:8px; background:#222; color:white;">
+                            ${p.variants.map(v => `<option value="${v.price}" data-size="${v.size}">Size ${v.size} - R${v.price}</option>`).join('')}
+                        </select>
+                    ` : `
+                        <input type="hidden" id="select-${safeId}" value="${first.price}" data-size="${first.size}">
+                        <div style="height: 45px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 0.8rem;">
+                            Standard Size
+                        </div>
+                    `}
 
                     <button class="btn add-btn" onclick="window.handleAddToCart('${safeId}', '${p.name}')" style="width:100%">
                         Add to Cart
