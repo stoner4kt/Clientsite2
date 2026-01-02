@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sgelar Admin | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Sales & <span class="highlight">Inventory</span></h1>
+            <button onclick="logoutAdmin()" class="btn btn-logout">Logout</button>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-label">Total Revenue</p>
+                <h2 id="stat-revenue">R0</h2>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Orders Fulfilled</p>
+                <h2 id="stat-orders">0</h2>
+            </div>
+        </div>
+
+        <h2 class="table-title">Product Inventory</h2>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Size</th>
+                        <th>Price (R)</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-list"></tbody>
+            </table>
+        </div>
+    </div>
+    <script type="module" src="admin-script.js"></script>
+</body>
+</html>

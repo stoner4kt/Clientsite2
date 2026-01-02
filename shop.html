@@ -3,37 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Collection | SGELAR</title>
+    <title>Shop | SGELAR</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <nav class="navbar">
-       <img src="assets/img/logo.png" style="height: 40px;">
+        <img src="assets/img/logo.png" style="height: 40px;">
         <ul class="nav-links" id="nav-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="shop.html">Shop Shoes</a></li>
-            
-            <li><a href="policies.html">Policies </a></li>
-            
             <li><a href="about.html">About Us</a></li>
+            <li><a href="policies.html">Policies</a></li>
             <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
         </ul>
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
     <main class="container">
-      <div class="shop-header">
-    <h2 class="section-title">School Shoes Collection</h2>
-    <div class="announcement-banner">
-        <i class="fas fa-bullhorn"></i> 
-        <span><strong>BACK TO SCHOOL SALE:</strong> Get 10% off all Junior Rugged models! Limited time only.</span>
-    </div>
-</div>
-        <div class="product-grid" id="product-grid">
+        <div class="shop-header text-center">
+            <h2 class="section-title">School Shoes Collection</h2>
+            <div class="announcement-banner">
+                <i class="fas fa-bullhorn"></i>
+                <span><strong>BACK TO SCHOOL:</strong> 10% Off All Junior Models!</span>
             </div>
+        </div>
+        <div class="product-grid" id="product-grid"></div>
     </main>
- <footer class="footer">
+<footer class="footer">
     <div class="container footer-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; padding: 40px 0;">
         <div>
             <h3 style="color:var(--yellow)">SGELAR</h3>
@@ -43,7 +40,8 @@
             <h4 style="color:var(--white)">Quick Links</h4>
             <ul style="list-style:none; padding:0;">
                 <li><a href="shop.html">Shop All</a></li>
-                <li><a href="about.html">About Us</a></li>
+                
+                <li><a href="about.html">About Us</a></li> 
                 <li><a href="index.html#contact">Contact Us</a></li>
             </ul>
         </div>
@@ -55,7 +53,7 @@
                 <li><a href="policies.html#privacy">Privacy Policy</a></li>
             </ul>
         </div>
-    </div>
+  
     
           <div class="social-links">
             <a href="#"><i class="fab fa-whatsapp"></i></a>
@@ -68,8 +66,6 @@
         <p>&copy; 2024 SGELAR. Proudly South African 🇿🇦</p>
     </div>
 </footer>
-   <script src="https://js.paystack.co/v1/inline.js"></script>
-
-<script type="module" src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
