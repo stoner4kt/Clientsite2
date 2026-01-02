@@ -19,10 +19,13 @@ const db = getFirestore(app);
 // This connects the names in your Firebase to the files in your local folder.
 const localImages = {
     "Sgelar The Classic Derby": "assets/img/shoe1.jpg",
+    
+    "Sgelar The Classic Derby Junior": "assets/img/shoe1.jpg",
     "Sgelar lace up": "assets/img/shoe2.jpg",
+    "Sgelar lace up Junior": "assets/img/shoe2.jpg",
     "Premium T-Bar Buckle": "assets/img/shoe3.jpg",
     "Sgelar Classic Junior": "assets/img/shoe4.jpg",
-    "Sgelar Buckle Cross Junior": "assets/img/shoe5.jpg",
+    "Sgelar Buckle Cross": "assets/img/shoe5.jpg",
     "Premium T-Bar Buckle Junior": "assets/img/shoe6.jpg", 
     
     
