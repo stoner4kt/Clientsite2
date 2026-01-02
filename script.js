@@ -21,7 +21,12 @@ const localImages = {
     "Sgelar The Classic Derby": "assets/img/shoe1.jpg",
     "Sgelar lace up": "assets/img/shoe2.jpg",
     "Premium T-Bar Buckle": "assets/img/shoe3.jpg",
-    "Tough-Step Lace Up": "assets/img/shoe4.jpg",
+    "Sgelar Classic Junior": "assets/img/shoe4.jpg",
+    "Sgelar Buckle Cross Junior": "assets/img/shoe5.jpg",
+    "Premium T-Bar Buckle Junior": "assets/img/shoe6.jpg", 
+    
+    
+    "Sgelar Classic Girls Junior": "assets/img/shoe4.jpg",
     "Sgelar Water Bottle": "assets/img/bottle3.jpg",
     "Sgelar Combo": "assets/img/combodeal.jpg",
     "Sgelar Bagpack": "assets/img/shoe8.jpg"
