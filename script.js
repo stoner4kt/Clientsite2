@@ -29,7 +29,7 @@ const localImages = {
     "Sgelar Classic Girls Junior": "assets/img/shoe4.jpg",
     "Sgelar Water Bottle": "assets/img/bottle3.jpg",
     "Sgelar Combo": "assets/img/combodeal.jpg",
-    "Sgelar Bagpack": "assets/img/shoe8.jpg"
+    "Sgelar Bagpack": "assets/img/bag.jpg"
 };
 
 // --- 3. UI & NAVIGATION INITIALIZATION ---
