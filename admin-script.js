@@ -20,16 +20,25 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // --- 1. AUTH CHECK ---
+const ADMIN_EMAIL = "sgelarshoes@gamil.com"; // 🔁 same email as rules
+
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("Admin Verified");
-        loadInventory();
-        loadOrders();
-    } else {
-        // Redirect back to login if not signed in
+    if (!user) {
         window.location.href = "login.html";
+        return;
     }
+
+    if (user.email !== ADMIN_EMAIL) {
+        alert("Access denied");
+        window.location.href = "index.html";
+        return;
+    }
+
+    console.log("Admin verified:", user.email);
+    loadInventory();
+    loadOrders();
 });
+
 
 // --- 2. LOAD INVENTORY ---
 function loadInventory() {
