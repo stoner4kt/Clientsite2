@@ -49,7 +49,7 @@ onAuthStateChanged(auth, (user) => {
     } else {
         authBtn.innerText = "Login";
         authBtn.onclick = () => {
-            window.location.href = "login.html";
+            window.location.href = "loginc.html";
         };
     }
 });
