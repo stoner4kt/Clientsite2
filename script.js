@@ -26,7 +26,7 @@ const localImages = {
     "Premium T-Bar Buckle": "assets/img/shoe3.jpg",
     "Sgelar Classic Junior": "assets/img/shoe4.jpg",
     "Sgelar Buckle Cross": "assets/img/shoe5.jpg",
-    "Premium T-Bar Buckle Junior": "assets/img/shoe6.jpg", 
+    "Premium T-Bar Buckle Junior": "assets/img/shoe11.jpg", 
     
     
     "Sgelar Classic Girls Junior": "assets/img/shoe4.jpg",
