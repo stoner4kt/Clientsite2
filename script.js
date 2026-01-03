@@ -177,7 +177,7 @@ window.updateUIPrice = (id, price) => {
 // ===============================
 window.handleAddToCart = async (safeId, fullName) => {
     if (!currentUser) {
-        window.location.href = "loginc.html";
+        window.location.href = "./loginc.html";
         return; // Added return to stop execution [cite: 25]
     }
 
