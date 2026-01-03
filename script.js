@@ -1,7 +1,20 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDocs, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+// ===============================
+// 1. IMPORTS
+// ===============================
 
-// --- 1. FIREBASE CONFIGURATION ---
+import { signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { 
+    getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDocs 
+} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import { 
+    getAuth, onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+// ===============================
+// 2. FIREBASE CONFIG
+// ===============================
 const firebaseConfig = {
     apiKey: "AIzaSyBjnfrqymhhE88LkFBIrC7tvV7YyXRCTh4",
     authDomain: "sgelar-web-store.firebaseapp.com",
@@ -14,82 +27,107 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// --- 2. LOCAL IMAGE MAPPING ---
-// This connects the names in your Firebase to the files in your local folder.
+let currentUser = null;
+
+// ===============================
+// 3. AUTH STATE
+// ===============================
+onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+
+    const authBtn = document.getElementById("auth-btn");
+    if (!authBtn) return;
+
+    if (user) {
+        authBtn.innerText = "Logout";
+        authBtn.onclick = async () => {
+            await signOut(auth);
+            window.location.reload();
+        };
+    } else {
+        authBtn.innerText = "Login";
+        authBtn.onclick = () => {
+            window.location.href = "login.html";
+        };
+    }
+});
+
+
+// ===============================
+// 4. LOCAL IMAGE MAPPING
+// ===============================
 const localImages = {
     "Sgelar The Classic Derby": "assets/img/shoe1.jpg",
-    
     "Sgelar The Classic Derby Junior": "assets/img/shoe1.jpg",
     "Sgelar lace up": "assets/img/shoe2.jpg",
     "Sgelar lace up Junior": "assets/img/shoe2.jpg",
     "Premium T-Bar Buckle": "assets/img/shoe3.jpg",
     "Sgelar Classic Junior": "assets/img/shoe4.jpg",
     "Sgelar Buckle Cross": "assets/img/shoe5.jpg",
-    "Premium T-Bar Buckle Junior": "assets/img/shoe11.jpg", 
-    
-    
+    "Premium T-Bar Buckle Junior": "assets/img/shoe11.jpg",
     "Sgelar Classic Girls Junior": "assets/img/shoe4.jpg",
     "Sgelar Water Bottle": "assets/img/bottle3.jpg",
     "Sgelar Combo": "assets/img/combodeal.jpg",
     "Sgelar Bagpack": "assets/img/bag.jpg"
 };
 
-// --- 3. UI & NAVIGATION INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Navbar Toggle
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('nav-links');
-    if (hamburger) {
-        hamburger.onclick = () => navLinks.classList.toggle('active');
-    }
+// ===============================
+// 5. DOM READY
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
 
-    // Initialize Shop Grid
-    const shopGrid = document.getElementById('product-grid');
+    // Mobile navbar
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("nav-links");
+    if (hamburger) hamburger.onclick = () => navLinks.classList.toggle("active");
+
+    // Shop
+    const shopGrid = document.getElementById("product-grid");
     if (shopGrid) renderShop(shopGrid);
 
-    // Initialize Cart Display
-    const cartItemsDiv = document.getElementById('cart-items');
-    if (cartItemsDiv) renderCart(cartItemsDiv);
-
-    // Global Cart Count Update
-    onSnapshot(collection(db, "cart"), (snap) => {
-        const count = document.getElementById('cart-count');
-        if (count) count.innerText = snap.size;
-    });
+    // Cart
+    const cartItemsDiv = document.getElementById("cart-items");
+    if (cartItemsDiv) {
+        onAuthStateChanged(auth, (user) => {
+            if (user) renderCart(cartItemsDiv);
+        });
+    }
 });
 
-// --- 4. SHOP RENDERING (FIREBASE DATA + LOCAL IMAGES) ---
+// ===============================
+// 6. SHOP RENDER
+// ===============================
 function renderShop(container) {
     onSnapshot(collection(db, "inventory"), (snapshot) => {
         if (snapshot.empty) {
-            container.innerHTML = "<p>Connecting to inventory...</p>";
+            container.innerHTML = "<p>Loading inventory...</p>";
             return;
         }
 
         const grouped = {};
-        snapshot.docs.forEach(doc => {
-            const data = doc.data();
-            const name = data.name;
-
-            if (!grouped[name]) {
-                grouped[name] = {
-                    name: name,
-                    img: localImages[name] || "assets/img/placeholder.jpg",
-                    description: data.description || "High-quality school gear.",
+        snapshot.forEach(docSnap => {
+            const d = docSnap.data();
+            if (!grouped[d.name]) {
+                grouped[d.name] = {
+                    name: d.name,
+                    img: localImages[d.name] || "assets/img/placeholder.jpg",
+                    description: d.description || "High-quality school gear.",
                     variants: []
                 };
             }
-            grouped[name].variants.push({ id: doc.id, size: data.size, price: data.price });
+            grouped[d.name].variants.push({
+                id: docSnap.id,
+                size: d.size,
+                price: d.price
+            });
         });
 
         container.innerHTML = Object.values(grouped).map(p => {
-            const safeId = p.name.replace(/\s+/g, '');
+            const safeId = p.name.replace(/\s+/g, "");
             p.variants.sort((a, b) => a.size - b.size);
             const first = p.variants[0];
-
-            // --- THE FIX IS HERE ---
-            // We check if there's more than 1 variant to decide whether to show the dropdown
             const hasMultipleSizes = p.variants.length > 1;
 
             return `
@@ -104,88 +142,148 @@ function renderShop(container) {
                     </p>
 
                     ${hasMultipleSizes ? `
-                        <select class="size-select" id="select-${safeId}" 
-                                onchange="window.updateUIPrice('${safeId}', this.value)" 
-                                style="width:100%; margin-bottom:10px; padding:8px; background:#222; color:white;">
-                            ${p.variants.map(v => `<option value="${v.price}" data-size="${v.size}">Size ${v.size} - R${v.price}</option>`).join('')}
+                        <select id="select-${safeId}" class="size-select"
+                                onchange="window.updateUIPrice('${safeId}', this.value)">
+                            ${p.variants.map(v =>
+                                `<option value="${v.price}" data-size="${v.size}">
+                                    Size ${v.size} - R${v.price}
+                                </option>`
+                            ).join("")}
                         </select>
                     ` : `
                         <input type="hidden" id="select-${safeId}" value="${first.price}" data-size="${first.size}">
-                        <div style="height: 45px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 0.8rem;">
-                            Standard Size
-                        </div>
+                        <div style="height:45px; text-align:center; color:#888;">Standard Size</div>
                     `}
 
-                    <button class="btn add-btn" onclick="window.handleAddToCart('${safeId}', '${p.name}')" style="width:100%">
+                    <button class="btn add-btn"
+                            onclick="window.handleAddToCart('${safeId}', '${p.name}')">
                         Add to Cart
                     </button>
                 </div>
             `;
-        }).join('');
+        }).join("");
     });
 }
 
-// --- 5. CART & PAYMENT LOGIC ---
+// ===============================
+// 7. UI PRICE UPDATE
+// ===============================
 window.updateUIPrice = (id, price) => {
     document.getElementById(`price-tag-${id}`).innerText = `R${price}`;
 };
 
+// ===============================
+// 8. ADD TO CART (SECURE)
+// ===============================
 window.handleAddToCart = async (safeId, fullName) => {
-    const select = document.getElementById(`select-${safeId}`);
-    const selectedOption = select.options[select.selectedIndex];
-    
+    if (!currentUser) {
+        window.location.href = "loginc.html";
+        return; // Added return to stop execution [cite: 25]
+    }
+
+    const element = document.getElementById(`select-${safeId}`);
+    let price, size;
+
+    // Check if it's a dropdown or a hidden input
+    if (element.tagName === "SELECT") {
+        const option = element.options[element.selectedIndex];
+        price = parseInt(option.value);
+        size = option.getAttribute("data-size");
+    } else {
+        // It's a hidden input for standard sizes 
+        price = parseInt(element.value);
+        size = element.getAttribute("data-size");
+    }
+
     try {
-        await addDoc(collection(db, "cart"), {
-            name: fullName,
-            price: parseInt(selectedOption.value),
-            size: selectedOption.getAttribute('data-size'),
-            timestamp: Date.now()
-        });
-        alert(`${fullName} added to cart!`);
-    } catch (e) { console.error("Error adding to cart:", e); }
+        await addDoc(
+            collection(db, "cart", currentUser.uid, "items"),
+            {
+                name: fullName,
+                price: price,
+                size: size,
+                createdAt: Date.now()
+            }
+        );
+        alert(`${fullName} added to cart`);
+    } catch (e) {
+        console.error("Firebase Error:", e);
+        alert("Failed to add item to cart. Check your console for permission errors.");
+    }
 };
 
+// ===============================
+// 9. RENDER CART (USER ONLY)
+// ===============================
 function renderCart(container) {
-    onSnapshot(collection(db, "cart"), (snap) => {
-        let total = 0;
-        container.innerHTML = snap.docs.map(doc => {
-            const item = doc.data();
-            total += item.price;
-            return `
-                <div class="cart-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;">
-                    <div>${item.name} (Size ${item.size})</div>
-                    <div>R${item.price} <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="window.removeFromCart('${doc.id}')"></i></div>
-                </div>
-            `;
-        }).join('');
-        const totalDisplay = document.getElementById('cart-total-final');
-        if (totalDisplay) totalDisplay.innerText = total;
-    });
+    onSnapshot(
+        collection(db, "cart", currentUser.uid, "items"),
+        (snap) => {
+            let total = 0;
+            container.innerHTML = snap.docs.map(d => {
+                const item = d.data();
+                total += item.price;
+                return `
+                    <div class="cart-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;">
+                        <div>${item.name} (Size ${item.size})</div>
+                        <div>
+                            R${item.price}
+                            <i class="fas fa-trash" style="color:red; cursor:pointer;"
+                               onclick="window.removeFromCart('${d.id}')"></i>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            const totalDisplay = document.getElementById("cart-total-final");
+            if (totalDisplay) totalDisplay.innerText = total;
+        }
+    );
 }
 
+// ===============================
+// 10. REMOVE FROM CART
+// ===============================
 window.removeFromCart = async (id) => {
-    await deleteDoc(doc(db, "cart", id));
+    await deleteDoc(doc(db, "cart", currentUser.uid, "items", id));
 };
 
+// ===============================
+// 11. PAYSTACK CHECKOUT
+// ===============================
 window.payWithPaystack = async () => {
-    const total = parseInt(document.getElementById('cart-total-final').innerText);
-    if (total <= 0) return alert("Cart is empty!");
+    if (!currentUser) {
+        alert("Please log in to checkout");
+        return;
+    }
+
+    const total = parseInt(document.getElementById("cart-total-final").innerText);
+    if (total <= 0) {
+        alert("Cart is empty");
+        return;
+    }
 
     const email = prompt("Enter your email for receipt:");
     if (!email) return;
 
     const handler = PaystackPop.setup({
-        key: 'pk_test_YOUR_ACTUAL_KEY', // <--- REPLACE THIS WITH YOUR PAYSTACK KEY
-        email: email,
+        key: "pk_test_YOUR_REAL_KEY",
+        email,
         amount: total * 100,
-        currency: 'ZAR',
+        currency: "ZAR",
         callback: async (response) => {
-            // Clear cart
-            const snapshot = await getDocs(collection(db, "cart"));
-            snapshot.docs.forEach(async (d) => await deleteDoc(doc(db, "cart", d.id)));
+
+            const cartRef = collection(db, "cart", currentUser.uid, "items");
+            const snap = await getDocs(cartRef);
+
+            snap.docs.forEach(async (d) => {
+                await deleteDoc(doc(db, "cart", currentUser.uid, "items", d.id));
+            });
+
             alert("Payment successful! Ref: " + response.reference);
             window.location.href = "index.html";
         }
     });
+
     handler.openIframe();
 };

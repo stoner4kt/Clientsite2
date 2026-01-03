@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Sgelar Store</title>
+
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0f0f0f;
+        }
+        .auth-box {
+            background: #1a1a1a;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,.6);
+        }
+        .auth-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #222;
+            border: none;
+            color: white;
+            border-radius: 6px;
+        }
+        .auth-box button {
+            width: 100%;
+            padding: 12px;
+            background: var(--yellow);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .auth-box p {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        .auth-box a {
+            color: var(--yellow);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-box">
+        <h2>Login / Sign Up</h2>
+
+        <input type="email" id="email" placeholder="Email address" />
+        <input type="password" id="password" placeholder="Password" />
+
+        <button onclick="login()">Login</button>
+
+        <p>
+            No account?
+            <a onclick="signup()">Create one</a>
+        </p>
+    </div>
+
+    <script type="module" src="login.js"></script>
+</body>
+</html>
