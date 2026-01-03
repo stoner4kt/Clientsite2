@@ -9,80 +9,74 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 <body>
-    <nav class="navbar">
-       <a href="index.html"> <img src="assets/img/logo.png" style="height: 40px;">
+   <nav class="navbar">
+        <img src="assets/img/logo.png" style="height: 40px;">
         <ul class="nav-links" id="nav-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="shop.html">Shop Shoes</a></li>
-            
-            <li><a href="policies.html">Policies </a></li>
             <li><a href="about.html">About Us</a></li>
+            <li><a href="policies.html">Policies</a></li>
             <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
         </ul>
-        
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
     <main class="container">
         <section class="blog-section">
             <div class="blog-row">
-                <div class="blog-image"><img src="assets/img/craftsmanship.jpg" alt="Craftsmanship" onerror="this.src='https://via.placeholder.com/500x300?text=Craftsmanship'"></div>
+                <div class="blog-image"><img src="assets/img/craftsmanship.jpg" alt="Craftsmanship"></div>
                 <div class="blog-text">
                     <h2>Our Craftsmanship</h2>
-                    <p>Every pair of SGELAR shoes is a result of meticulous South African handiwork. We use premium leather to ensure durability for the toughest school terms.</p>
-                </div>
-            </div>
-            <div class="blog-row reverse">
-                <div class="blog-image"><img src="assets/img/community.jpg" alt="Community" onerror="this.src='https://via.placeholder.com/500x300?text=Community'"></div>
-                <div class="blog-text">
-                    <h2>Community Focused</h2>
-                    <p>We believe quality education starts with quality footwear. By supporting local manufacturing, we invest back into our South African communities.</p>
+                                        <p>Every pair of SGELAR shoes is a result of meticulous South African handiwork. We use premium leather to ensure durability for the toughest school terms.</p> 
                 </div>
             </div>
             
+            <section class="blog-section">
             <div class="blog-row">
+                <div class="blog-image"><img src="assets/img/community.jpg" alt="Community assistance"></div>
+                <div class="blog-text">
+                    <h2>Community Focused</h2>
+                                        <p>We believe quality education starts with quality footwear. By supporting local manufacturing, we invest back into our South African communities.</p>
+                </div>
+            </div>
+                        <div class="blog-row">
                 <div class="blog-image"><img src="assets/img/story.jpg" alt="Craftsmanship" onerror="this.src='https://via.placeholder.com/500x300?text=Craftsmanship'"></div>
                 <div class="blog-text">
                     <h2>Founder</h2>
                     <p>Every pair of SGELAR shoes is a result of meticulous South African handiwork. We use premium leather to ensure durability for the toughest school terms.</p>
                 </div>
+            <section class="blog-section">
+            <div class="blog-row">
+                <div class="blog-image"><img src="assets/img/ourvision.jpg" alt="Our Vision"></div>
+                <div class="blog-text">
+                    <h2>Our Vision </h2>
+                                        <p>We believe quality education starts with quality footwear. By supporting local manufacturing, we invest back into our South African communities.</p>
                 </div>
+            </div>
         </section>
-
+</section>
         <section class="reviews-section text-center">
-            <h2 class="section-title" style="color:var(--yellow)">Customer Reviews</h2>
+            <h2 style="color:var(--yellow)">Customer Reviews</h2>
             <div class="swiper review-swiper">
-                <div class="swiper-wrapper" id="reviews-container">
-                    </div>
+                <div class="swiper-wrapper" id="reviews-container"></div>
                 <div class="swiper-pagination"></div>
             </div>
         </section>
 
         <section class="leave-review card" style="max-width: 600px; margin: 50px auto;">
-            <h3 class="text-center">Leave a Review</h3>
+            <h3>Leave a Review</h3>
             <form id="review-form">
-                <input type="text" id="rev-name" placeholder="Your Name" required class="contact-form" style="width:100%; padding:10px; margin-bottom:10px; background:#2a2a2a; border:1px solid #444; color:white;">
-                
-                <div class="star-rating" style="margin-bottom:15px; font-size:1.5rem; color:#444; cursor:pointer; text-align:center;">
-                    <i class="fas fa-star" data-value="1"></i>
-                    <i class="fas fa-star" data-value="2"></i>
-                    <i class="fas fa-star" data-value="3"></i>
-                    <i class="fas fa-star" data-value="4"></i>
+                <input type="text" id="rev-name" placeholder="Name" required class="contact-form" style="width:100%; margin-bottom:10px;">
+                <div class="star-rating" style="margin-bottom:15px; text-align:center;">
+                    <i class="fas fa-star" data-value="1"></i><i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i><i class="fas fa-star" data-value="4"></i>
                     <i class="fas fa-star" data-value="5"></i>
                 </div>
-                
-                <textarea id="rev-text" placeholder="Share your experience..." required style="width:100%; height:100px; padding:10px; background:#2a2a2a; border:1px solid #444; color:white; margin-bottom:15px;"></textarea>
+                <textarea id="rev-text" placeholder="Your review..." required style="width:100%; height:100px; margin-bottom:15px;"></textarea>
                 <button type="submit" class="btn" style="width:100%">Post Review</button>
             </form>
         </section>
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script type="module" src="script.js"></script>
-    
-     <script src="https://js.paystack.co/v1/inline.js"></script
-</body>
-
 <footer class="footer">
     <div class="container footer-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; padding: 40px 0;">
         <div>
@@ -94,7 +88,7 @@
             <ul style="list-style:none; padding:0;">
                 <li><a href="shop.html">Shop All</a></li>
                 
-                <li><a href="about.html">About Us</a></li>
+                <li><a href="about.html">About Us</a></li> 
                 <li><a href="index.html#contact">Contact Us</a></li>
             </ul>
         </div>
@@ -106,7 +100,7 @@
                 <li><a href="policies.html#privacy">Privacy Policy</a></li>
             </ul>
         </div>
-    </div>
+  
     
           <div class="social-links">
             <a href="#"><i class="fab fa-whatsapp"></i></a>
@@ -119,6 +113,7 @@
         <p>&copy; 2024 SGELAR. Proudly South African 🇿🇦</p>
     </div>
 </footer>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
 </html>

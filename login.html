@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | SGELAR</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-wrapper { height: 100vh; display: flex; align-items: center; justify-content: center; background: #000; }
+        .login-card { background: #111; padding: 40px; border-radius: 10px; width: 100%; max-width: 350px; border-top: 4px solid var(--yellow); }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #333; color: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <h2 style="color: var(--yellow); margin-bottom: 20px; text-align: center;">Admin Access</h2>
+            <input type="email" id="email" placeholder="Admin Email">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn" id="login-btn" style="width: 100%; margin-top: 10px;">Login</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjnfrqymhhE88LkFBIrC7tvV7YyXRCTh4",
+            authDomain: "sgelar-web-store.firebaseapp.com",
+            projectId: "sgelar-web-store",
+            storageBucket: "sgelar-web-store.firebasestorage.app",
+            messagingSenderId: "984584108456",
+            appId: "1:984584108456:web:51ca48c53cbf16d459059d",
+            measurementId: "G-Q0FD7RSMQQ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => { window.location.href = "admin.html"; })
+                .catch((error) => { alert("Invalid Credentials: " + error.message); });
+        });
+    </script>
+</body>
+</html>
