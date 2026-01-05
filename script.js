@@ -257,31 +257,37 @@ window.payWithPaystack = async () => {
         return;
     }
 
-    const total = parseInt(document.getElementById("cart-total-final").innerText);
-    if (total <= 0) {
+    const totalDisplay = document.getElementById("cart-total-final");
+    const total = parseInt(totalDisplay.innerText);
+
+    if (!total || total <= 0) {
         alert("Cart is empty");
         return;
     }
 
-    const email = prompt("Enter your email for receipt:");
-    if (!email) return;
-
     const handler = PaystackPop.setup({
-        key: "pk_test_YOUR_REAL_KEY",
-        email,
-        amount: total * 100,
+        key: "pk_test_YOUR_PUBLIC_KEY", // Replace with your key
+        email: currentUser.email,
+        amount: total * 100, // ZAR in cents
         currency: "ZAR",
+        metadata: {
+            // This is CRITICAL for the backend to know who paid
+            custom_fields: [
+                {
+                    display_name: "User ID",
+                    variable_name: "user_id",
+                    value: currentUser.uid
+                }
+            ]
+        },
         callback: async (response) => {
-
-            const cartRef = collection(db, "cart", currentUser.uid, "items");
-            const snap = await getDocs(cartRef);
-
-            snap.docs.forEach(async (d) => {
-                await deleteDoc(doc(db, "cart", currentUser.uid, "items", d.id));
-            });
-
-            alert("Payment successful! Ref: " + response.reference);
-            window.location.href = "index.html";
+            alert("Payment received! Reference: " + response.reference);
+            // Instead of deleting cart here, redirect to a 'processing' or 'success' page
+            // Your backend (Step 2) will handle the rest automatically
+            window.location.href = "success.html";
+        },
+        onClose: () => {
+            alert("Window closed.");
         }
     });
 
